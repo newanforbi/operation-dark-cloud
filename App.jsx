@@ -403,11 +403,11 @@ const VECTORS = [
 ];
 
 const PRIORITY_CONFIG = {
-  critical: { label: "CRITICAL", bg: "bg-red-900/40", border: "border-red-500/60", text: "text-red-400", dot: "bg-red-500" },
-  high: { label: "HIGH", bg: "bg-amber-900/30", border: "border-amber-500/50", text: "text-amber-400", dot: "bg-amber-500" },
-  medium: { label: "MEDIUM", bg: "bg-blue-900/30", border: "border-blue-500/40", text: "text-blue-400", dot: "bg-blue-500" },
-  low: { label: "LOW", bg: "bg-slate-800/50", border: "border-slate-500/30", text: "text-slate-400", dot: "bg-slate-500" },
-  done: { label: "DONE", bg: "bg-emerald-900/30", border: "border-emerald-500/40", text: "text-emerald-400", dot: "bg-emerald-500" },
+  critical: { label: "CRITICAL", bg: "bg-red-950/60",     border: "border-red-600/70",    text: "text-red-400",    dot: "bg-red-500"    },
+  high:     { label: "HIGH",     bg: "bg-orange-950/50",  border: "border-orange-600/60", text: "text-orange-400", dot: "bg-orange-500" },
+  medium:   { label: "MEDIUM",   bg: "bg-violet-950/40",  border: "border-violet-600/50", text: "text-violet-400", dot: "bg-violet-500" },
+  low:      { label: "LOW",      bg: "bg-slate-900/60",   border: "border-slate-700/30",  text: "text-slate-500",  dot: "bg-slate-600"  },
+  done:     { label: "DONE",     bg: "bg-emerald-950/30", border: "border-emerald-800/30",text: "text-emerald-600",dot: "bg-emerald-700" },
 };
 
 const STORAGE_KEY = "accountability-tracker-v2";
@@ -445,6 +445,53 @@ export default function AccountabilityTracker() {
       } catch (e) { console.error(e); }
     })();
   }, [completedTasks, notes, loaded]);
+
+  useEffect(() => {
+    if (document.getElementById('dc-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'dc-styles';
+    style.textContent = `
+.dc-root {
+  background-color: #05070f;
+  background-image:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(30,20,60,0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 25% at 50% 0%, rgba(80,20,20,0.18) 0%, transparent 60%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+.dc-title { text-shadow: 0 0 12px rgba(220,38,38,0.7), 0 0 30px rgba(220,38,38,0.3), 0 0 60px rgba(139,0,0,0.2); letter-spacing: 0.12em; }
+.dc-title-dot { filter: drop-shadow(0 0 6px rgba(220,38,38,0.9)) drop-shadow(0 0 14px rgba(220,38,38,0.5)); animation: dc-dot-pulse 3s ease-in-out infinite; }
+@keyframes dc-dot-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.dc-header-border { box-shadow: 0 1px 0 0 rgba(100,20,20,0.4), 0 2px 8px 0 rgba(0,0,0,0.6); }
+.dc-agent-card { background:rgba(15,12,25,0.6); border:1px solid rgba(51,45,75,0.5); transition:border-color .2s,box-shadow .2s,background .2s; }
+.dc-agent-card:hover { background:rgba(20,16,35,0.8); border-color:rgba(100,80,140,0.6); box-shadow:0 0 18px rgba(80,40,120,0.25),0 2px 12px rgba(0,0,0,0.5); }
+.dc-vector-card { background:rgba(12,14,22,0.7); border:1px solid rgba(40,45,70,0.5); transition:border-color .2s,box-shadow .2s; }
+.dc-vector-card:hover { border-color:rgba(80,100,180,0.4); box-shadow:0 0 16px rgba(60,80,180,0.15),0 2px 10px rgba(0,0,0,0.5); }
+.dc-agent-detail { box-shadow:0 0 0 1px rgba(255,255,255,0.04) inset,0 4px 24px rgba(0,0,0,0.5); }
+.dc-task-card { transition:box-shadow .15s ease,border-color .15s ease; }
+.dc-task-card:hover { box-shadow:0 0 10px rgba(0,0,0,0.4); }
+.dc-critical { animation: dc-critical-pulse 2.5s ease-in-out infinite; }
+@keyframes dc-critical-pulse {
+  0%,100% { box-shadow: 0 0 6px rgba(220,38,38,0.2); }
+  50%      { box-shadow: 0 0 18px rgba(220,38,38,0.45), 0 0 4px rgba(180,0,0,0.3), inset 0 0 0 1px rgba(220,38,38,0.08); }
+}
+.dc-progress-track { box-shadow:inset 0 1px 3px rgba(0,0,0,0.5); background-color:#0d1117 !important; }
+.dc-progress-fill { box-shadow:0 0 8px var(--progress-color,#10b981),0 0 2px var(--progress-color,#10b981); transition:width .5s ease,box-shadow .3s ease; }
+.dc-progress-global .dc-progress-fill { box-shadow:0 0 10px rgba(180,30,30,0.6),0 0 3px rgba(220,38,38,0.4); }
+.dc-tab-active { background:rgba(80,40,100,0.45) !important; color:#e2d4f0 !important; border:1px solid rgba(140,80,180,0.4); box-shadow:0 0 10px rgba(120,60,160,0.2),inset 0 1px 0 rgba(180,120,220,0.1); }
+.dc-tab-inactive { color:rgba(120,110,140,0.8); border:1px solid transparent; }
+.dc-tab-inactive:hover { color:rgba(200,180,220,0.9); background:rgba(60,40,80,0.3); border-color:rgba(100,70,130,0.2); }
+.dc-checkbox-done { box-shadow:0 0 8px rgba(16,185,129,0.5); }
+.dc-checkbox-undone:hover { border-color:rgba(180,140,220,0.7) !important; box-shadow:0 0 6px rgba(140,80,180,0.3); }
+.dc-note-input:focus { border-color:rgba(120,80,160,0.6) !important; box-shadow:0 0 0 2px rgba(100,60,140,0.15); outline:none; }
+.dc-reset-btn:hover { color:rgba(220,38,38,0.8) !important; border-color:rgba(120,20,20,0.5) !important; box-shadow:0 0 8px rgba(180,0,0,0.15); }
+.dc-footer { border-top:1px solid rgba(30,20,50,0.6); box-shadow:0 -1px 0 0 rgba(0,0,0,0.5); }
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:#05070f}
+::-webkit-scrollbar-thumb{background:rgba(60,50,90,0.6);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(100,80,140,0.8)}
+    `;
+    document.head.appendChild(style);
+  }, []);
 
   const toggleTask = useCallback((taskId) => {
     setCompletedTasks((prev) => {
@@ -496,17 +543,21 @@ export default function AccountabilityTracker() {
     return (
       <div
         key={task.id}
-        className={`border rounded-lg mb-2 transition-all duration-200 ${isDone ? "border-emerald-500/30 bg-emerald-950/20" : `${p.border} ${p.bg}`}`}
+        className={`border rounded-lg mb-2 dc-task-card transition-all duration-200 ${
+          isDone
+            ? "border-emerald-800/25 bg-emerald-950/15"
+            : `${p.border} ${p.bg}${task.priority === "critical" ? " dc-critical" : ""}`
+        }`}
       >
         <div className="flex items-start gap-3 p-3 cursor-pointer" onClick={() => toggleExpand(task.id)}>
           <button
             onClick={(e) => { e.stopPropagation(); if (task.priority !== "done") toggleTask(task.id); }}
             className={`mt-0.5 w-5 h-5 rounded flex-shrink-0 border-2 flex items-center justify-center transition-all ${
-              isDone ? "border-emerald-500 bg-emerald-500" : "border-slate-500 hover:border-slate-300"
+              isDone ? "border-emerald-600 bg-emerald-600 dc-checkbox-done" : "border-slate-600 dc-checkbox-undone"
             }`}
           >
             {isDone && (
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ filter: 'drop-shadow(0 0 2px rgba(255,255,255,0.4))' }}>
                 <path d="M2 6L5 9L10 3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             )}
@@ -548,7 +599,8 @@ export default function AccountabilityTracker() {
           </div>
 
           <svg
-            className={`w-4 h-4 text-slate-500 transition-transform flex-shrink-0 mt-1 ${isExpanded ? "rotate-180" : ""}`}
+            className={`w-4 h-4 transition-transform flex-shrink-0 mt-1 ${isExpanded ? "rotate-180" : ""}`}
+            style={{ color: 'rgba(120,100,160,0.6)' }}
             viewBox="0 0 20 20" fill="currentColor"
           >
             <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" />
@@ -578,7 +630,8 @@ export default function AccountabilityTracker() {
                   onChange={(e) => setNoteInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && saveNote(task.id)}
                   placeholder="Add a note..."
-                  className="flex-1 text-xs bg-slate-800 border border-slate-600 rounded px-2 py-1.5 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-slate-400"
+                  className="flex-1 text-xs rounded px-2 py-1.5 text-slate-200 placeholder-slate-600 dc-note-input"
+                  style={{ background: 'rgba(8,10,20,0.8)', border: '1px solid rgba(60,50,90,0.5)' }}
                   autoFocus
                 />
                 <button onClick={() => saveNote(task.id)} className="text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 px-2 py-1 rounded">
@@ -604,11 +657,18 @@ export default function AccountabilityTracker() {
     );
   };
 
-  const ProgressBar = ({ stats, color = "#10b981", height = 6 }) => (
-    <div className="w-full rounded-full overflow-hidden" style={{ height, backgroundColor: "#1e293b" }}>
+  const ProgressBar = ({ stats, color = "#10b981", height = 6, isGlobal = false }) => (
+    <div
+      className={`w-full rounded-full overflow-hidden dc-progress-track${isGlobal ? " dc-progress-global" : ""}`}
+      style={{ height }}
+    >
       <div
-        className="h-full rounded-full transition-all duration-500"
-        style={{ width: `${stats.pct}%`, backgroundColor: color }}
+        className="h-full rounded-full dc-progress-fill"
+        style={{
+          width: `${stats.pct}%`,
+          background: `linear-gradient(90deg, ${color}cc 0%, ${color} 60%, ${color}dd 100%)`,
+          '--progress-color': color,
+        }}
       />
     </div>
   );
@@ -622,37 +682,37 @@ export default function AccountabilityTracker() {
 
   if (!loaded) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#05070f' }}>
         <div className="text-slate-400 animate-pulse">Loading tracker...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', monospace" }}>
+    <div className="min-h-screen text-slate-100 dc-root" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', monospace" }}>
       <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
       {/* Header */}
-      <div className="border-b border-slate-800 bg-slate-950/95 sticky top-0 z-50 backdrop-blur-sm">
+      <div className="sticky top-0 z-50 backdrop-blur-md dc-header-border" style={{ background: 'rgba(5,7,15,0.96)' }}>
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h1 className="text-lg font-bold tracking-tight">
-                <span className="text-red-500">◉</span> DARK CLOUD PROTOCOL
+              <h1 className="text-lg font-bold dc-title">
+                <span className="text-red-500 dc-title-dot">◉</span> DARK CLOUD PROTOCOL
               </h1>
-              <p className="text-[10px] text-slate-500 mt-0.5 tracking-widest uppercase">
+              <p className="text-[10px] mt-0.5 uppercase" style={{ color: 'rgba(100,85,120,0.8)', letterSpacing: '0.2em' }}>
                 Multi-Vector Administrative Accountability Tracker — Stockton DAPO Unit
               </p>
             </div>
-            <button onClick={resetAll} className="text-[10px] text-slate-600 hover:text-red-400 transition-colors px-2 py-1 border border-slate-800 rounded hover:border-red-800">
+            <button onClick={resetAll} className="text-[10px] transition-colors px-2 py-1 rounded dc-reset-btn" style={{ color: 'rgba(80,70,100,0.7)', border: '1px solid rgba(40,35,60,0.6)' }}>
               Reset
             </button>
           </div>
 
           {/* Global Progress */}
           <div className="flex items-center gap-3 mb-3">
-            <ProgressBar stats={globalStats} height={8} />
-            <span className="text-xs text-slate-400 flex-shrink-0 font-semibold">
+            <ProgressBar stats={globalStats} height={8} isGlobal={true} />
+            <span className="text-xs flex-shrink-0 font-semibold" style={{ color: 'rgba(180,150,180,0.7)' }}>
               {globalStats.done}/{globalStats.total} ({globalStats.pct}%)
             </span>
           </div>
@@ -668,9 +728,7 @@ export default function AccountabilityTracker() {
                 key={tab.id}
                 onClick={() => { setViewMode(tab.id); setSelectedAgent(null); setSelectedVector(null); }}
                 className={`text-xs px-3 py-1.5 rounded transition-all ${
-                  viewMode === tab.id
-                    ? "bg-slate-700 text-slate-100"
-                    : "text-slate-500 hover:text-slate-300 hover:bg-slate-800/50"
+                  viewMode === tab.id ? "dc-tab-active" : "dc-tab-inactive"
                 }`}
               >
                 {tab.label}
@@ -695,7 +753,7 @@ export default function AccountabilityTracker() {
                 <button
                   key={agent.id}
                   onClick={() => setSelectedAgent(agent.id)}
-                  className="w-full text-left border border-slate-800 hover:border-slate-600 rounded-lg p-4 transition-all hover:bg-slate-900/50"
+                  className="w-full text-left rounded-lg p-4 dc-agent-card"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>
@@ -738,7 +796,7 @@ export default function AccountabilityTracker() {
               const stats = getAgentStats(selectedAgent);
               return (
                 <>
-                  <div className="border rounded-lg p-4 mb-4" style={{ borderColor: agent.color + "44", backgroundColor: agent.color + "08" }}>
+                  <div className="border rounded-lg p-4 mb-4 dc-agent-detail" style={{ borderColor: agent.color + "55", backgroundColor: agent.color + "0d" }}>
                     <div className="flex items-center gap-2 mb-1">
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: agent.color }} />
                       <h2 className="text-base font-bold">{agent.name}</h2>
@@ -752,7 +810,7 @@ export default function AccountabilityTracker() {
                       <ul className="space-y-1">
                         {agent.allegations.map((a, i) => (
                           <li key={i} className="text-xs text-slate-400 flex gap-2">
-                            <span className="text-red-500 flex-shrink-0">▸</span>
+                            <span className="text-red-500 flex-shrink-0" style={{ filter: 'drop-shadow(0 0 3px rgba(220,38,38,0.5))' }}>▸</span>
                             {a}
                           </li>
                         ))}
@@ -789,10 +847,8 @@ export default function AccountabilityTracker() {
                 <button
                   key={vector.id}
                   onClick={() => setSelectedVector(vector.id)}
-                  className={`w-full text-left border rounded-lg p-4 transition-all hover:bg-slate-900/50 ${
-                    isDone
-                      ? "border-emerald-800/50 bg-emerald-950/20"
-                      : "border-slate-800 hover:border-slate-600"
+                  className={`w-full text-left rounded-lg p-4 dc-vector-card ${
+                    isDone ? "border-emerald-800/50 bg-emerald-950/20" : ""
                   }`}
                 >
                   <div className="flex items-start justify-between mb-2">
@@ -830,7 +886,7 @@ export default function AccountabilityTracker() {
               const stats = getVectorStats(selectedVector);
               return (
                 <>
-                  <div className="border border-slate-700 rounded-lg p-4 mb-4 bg-slate-900/30">
+                  <div className="border rounded-lg p-4 mb-4 dc-vector-card">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xl">{vector.icon}</span>
                       <h2 className="text-base font-bold">Vector {vector.num}: {vector.name}</h2>
@@ -873,7 +929,7 @@ export default function AccountabilityTracker() {
       </div>
 
       {/* Footer */}
-      <div className="border-t border-slate-800 mt-8">
+      <div className="mt-8 dc-footer">
         <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
           <span className="text-[10px] text-slate-600">
             Newanforbi v. CDCR DAPO Stockton — Administrative Accountability Matrix
